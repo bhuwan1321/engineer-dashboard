@@ -1,179 +1,131 @@
-# Engineer OS
+<h1 align="center">Engineer Dashboard</h1>
 
-Your personal dashboard for fitness, DSA, academics, and career — built with Next.js 14 + Firebase.
+<p align="center"><b>A personal dashboard for fitness, DSA practice, academics and career tasks.</b><br>
+Next.js and Firebase. Google sign-in, with each user's data kept private to them.</p>
 
-## What's inside
+<p align="center">
+  <a href="#quick-start"><b>Quick start</b></a> ·
+  <a href="#what-you-can-do"><b>What you can do</b></a> ·
+  <a href="#security-and-privacy"><b>Security and privacy</b></a> ·
+  <a href="#development"><b>Development</b></a>
+</p>
+
+Engineer Dashboard tracks the things a student engineer juggles in one place: daily health logs, workouts,
+data-structures practice, exams and engineering tasks. It is a **Next.js 14** app that stores data in **Firestore**
+and signs users in with Google, so every user sees only their own records.
+
+## What you can do
 
 | Section | What it tracks |
 |---|---|
-| **Dashboard** | Weight trend, protein, streaks, high-priority tasks, charts |
-| **Diet** | Daily logs (weight, protein, sleep, water), muesli protein calculator, meal plan |
-| **Workout** | Today's split, weekly plan, workout logging, consistency chart |
-| **DSA** | Daily problem suggestions, full 8-topic curriculum, Striver + NeetCode links, progress per topic |
-| **Engineering** | Tasks with priority, status, due dates — filtered by category |
-| **Academics** | Sem exam planner, subject-wise progress, deadline countdown |
-| **Monitor** | Overall health score, streak status, 30-day heatmap, 12 system checks |
+| **Dashboard** | Weight trend, protein, streaks, high-priority tasks and charts |
+| **Diet** | Daily logs (weight, protein, sleep, water), a muesli protein calculator and a meal plan |
+| **Workout** | Today's split, weekly plan, workout logging and a consistency chart |
+| **DSA** | Daily problem suggestions, an 8-topic curriculum with Striver and NeetCode links, and progress per topic |
+| **Engineering** | Tasks with priority, status and due dates, filtered by category |
+| **Academics** | Semester exam planner, subject-wise progress and a deadline countdown |
+| **Monitor** | Overall health score, streak status, a 30-day heatmap and 12 system checks |
 
----
+## Quick start
 
-## Step 1 — Create Firebase project
+You need **Node.js 18+** and a free **Firebase** account.
 
-1. Go to [console.firebase.google.com](https://console.firebase.google.com)
-2. Click **Add project** → name it `engineer-os` → create
-3. In the project, click **Authentication** → **Get started** → enable **Google** sign-in
-4. Click **Firestore Database** → **Create database** → start in **production mode** → pick a region
-5. Click **Project Settings** (gear icon) → **Your apps** → **Add app** → Web
-6. Copy the config values — you'll need them in Step 3
+### 1. Create a Firebase project
 
----
+1. Open the [Firebase console](https://console.firebase.google.com) and add a project.
+2. Under **Authentication**, enable the **Google** sign-in provider.
+3. Under **Firestore Database**, create a database in production mode.
+4. In **Project settings**, add a **Web app** and copy its config values.
 
-## Step 2 — Install dependencies
+### 2. Install and configure
 
 ```bash
 git clone https://github.com/bhuwan1321/engineer-dashboard.git
 cd engineer-dashboard
 npm install
-```
-
----
-
-## Step 3 — Configure environment
-
-```bash
 cp .env.local.example .env.local
 ```
 
-Open `.env.local` and paste your Firebase values:
+Open `.env.local` and fill in the values from step 1:
 
 ```env
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSy...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=engineer-os-xxxxx.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=engineer-os-xxxxx
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=engineer-os-xxxxx.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
+NEXT_PUBLIC_FIREBASE_API_KEY=...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+NEXT_PUBLIC_FIREBASE_APP_ID=...
 ```
 
----
+### 3. Publish the security rules
 
-## Step 4 — Set Firestore security rules
+In the Firebase console, open **Firestore Database**, then **Rules**. Paste the contents of
+[`firestore.rules`](firestore.rules) and publish. This limits every collection to the signed-in owner.
 
-In Firebase Console → Firestore → **Rules** tab, paste the contents of `firestore.rules` and publish.
-
-This ensures each user can only read and write their own data.
-
----
-
-## Step 5 — Run locally
+### 4. Run it
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Sign in with Google and start tracking.
+Open <http://localhost:3000>, sign in with Google and start tracking.
 
----
+## Deploy
 
-## Step 6 — Deploy to Firebase Hosting
+**Vercel:** run `vercel` from the project folder, then add the six `NEXT_PUBLIC_FIREBASE_*` variables under
+**Settings, Environment Variables**.
 
-### Install Firebase CLI (first time only)
+**Firebase Hosting:**
+
 ```bash
 npm install -g firebase-tools
 firebase login
-```
-
-### Initialize Firebase in the project
-```bash
-firebase init hosting
-# Choose: Use an existing project → select engineer-os-xxxxx
-# When asked about framework: Yes, it's Next.js
-```
-
-### Deploy
-```bash
+firebase init hosting     # choose your project and answer yes to the Next.js framework prompt
 npm run build
 firebase deploy
 ```
 
-Your app will be live at `https://engineer-os-xxxxx.web.app`
+## Security and privacy
 
----
+- Sign-in is Google only. The app has no passwords of its own.
+- [`firestore.rules`](firestore.rules) allow a signed-in user to read and write only documents that carry their own user ID.
+- The `NEXT_PUBLIC_FIREBASE_*` values are Firebase web configuration. They are delivered to every visitor's browser by design, so the security rules, not secrecy of these values, protect your data.
+- Keep `.env.local` out of git. It is already in `.gitignore`.
+- In the Google Cloud console you can also restrict the API key to your own domains.
 
-## Alternative: Deploy to Vercel (easier)
+## Data model
+
+| Collection | Contents |
+|---|---|
+| `profiles/{uid}` | Profile and body metrics |
+| `daily_logs/{uid}_{date}` | Weight, protein, sleep, workout, calories, water and mood |
+| `dsa_entries/{auto-id}` | Topic, problem, difficulty, status, date and time spent |
+| `topic_tests/{auto-id}` | Quiz scores and weak areas per DSA topic |
+| `workout_sessions/{auto-id}` | Exercises, sets and reps |
+| `performance_metrics/{uid}_{date}_{category}` | Daily performance numbers |
+| `tasks/{auto-id}` | Title, category, priority, status, due date and subject |
+| `streaks/{uid}` | Diet, workout, DSA and engineering streaks with last dates |
+
+## Project layout
+
+```
+src/app/                 Root page with the sign-in gate, layout and global styles
+src/components/          One folder per section: diet, workout, dsa, engineering, academics, monitor, analytics
+src/lib/                 Firebase setup, Firestore operations and curriculum data
+src/store/               Zustand global state
+firestore.rules          Security rules
+```
+
+## Development
+
+Built with Next.js 14 (App Router), TypeScript, Tailwind CSS, Recharts, Zustand and Firebase.
 
 ```bash
-npm install -g vercel
-vercel
+npm run dev      # development server
+npm run lint     # lint
+npm run build    # production build; needs the Firebase variables set
 ```
 
-Add your environment variables in the Vercel dashboard under **Settings → Environment Variables**.
-
----
-
-## Project structure
-
-```
-src/
-├── app/
-│   ├── page.tsx          ← main app + auth gate
-│   ├── layout.tsx        ← root layout, fonts
-│   └── globals.css       ← design system CSS
-├── components/
-│   ├── layout/
-│   │   ├── AuthProvider.tsx   ← Firebase Auth context
-│   │   ├── Sidebar.tsx        ← navigation + streaks
-│   │   └── Dashboard.tsx      ← overview page
-│   ├── diet/
-│   │   └── DietTracker.tsx    ← logs + muesli calculator + charts
-│   ├── workout/
-│   │   └── WorkoutTracker.tsx ← split + logging + consistency
-│   ├── dsa/
-│   │   └── DSATracker.tsx     ← problems + curriculum + roadmap
-│   ├── engineering/
-│   │   └── EngineeringTracker.tsx ← tasks + priority + status
-│   ├── academics/
-│   │   └── AcademicsTracker.tsx   ← exam planner + subject progress
-│   └── monitor/
-│       └── MonitorPage.tsx    ← health checks + heatmap + streaks
-├── lib/
-│   ├── firebase.ts        ← Firebase init
-│   ├── firestore.ts       ← all DB operations
-│   └── curriculum.ts      ← DSA problems + SDE roadmap data
-└── store/
-    └── index.ts           ← Zustand global state
-```
-
----
-
-## Data model (Firestore collections)
-
-```
-daily_logs/{uid}_{date}     weight, protein, sleep, workout, calories, water, mood
-dsa_entries/{auto-id}       topic, problem, difficulty, status, date, timeMinutes
-tasks/{auto-id}             title, category, priority, status, dueDate, subject
-streaks/{uid}               diet, workout, dsa, engineering + last dates
-```
-
----
-
-## Extending the app
-
-**Add a new page:**
-1. Create `src/components/yourpage/YourPage.tsx`
-2. Add it to the `pages` map in `src/app/page.tsx`
-3. Add a nav item in `src/components/layout/Sidebar.tsx`
-
-**Add a new Firestore collection:**
-1. Add the interface and CRUD functions in `src/lib/firestore.ts`
-2. Add matching security rules in `firestore.rules`
-
----
-
-## Tech stack
-
-- **Next.js 14** — App Router, React Server/Client components
-- **Firebase** — Firestore (DB), Authentication (Google sign-in), Hosting
-- **Tailwind CSS** — utility-first styling
-- **Recharts** — weight/protein/sleep charts
-- **Zustand** — lightweight global state
-- **TypeScript** — full type safety throughout
+To add a page, create `src/components/yourpage/YourPage.tsx`, register it in the `pages` map in `src/app/page.tsx`
+and add a nav item in `src/components/layout/Sidebar.tsx`. To add a collection, add its CRUD functions in
+`src/lib/firestore.ts` and matching rules in `firestore.rules`.
