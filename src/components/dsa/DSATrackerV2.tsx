@@ -48,7 +48,7 @@ const EXTENDED_PROBLEMS: Record<string, { title: string; url: string; difficulty
 }
 
 // Topic quiz questions for self-assessment
-const TOPIC_QUIZZES: Record<string, { q: string; options: string[]; answer: number; explain: string }[]> = {
+const TOPIC_QUIZZES: Record<string, { q: string; options: string[]; answer: number; explain: string; concept?: string }[]> = {
   'arrays': [
     { q: 'What is the time complexity of Kadane\'s algorithm for maximum subarray?', options: ['O(n²)', 'O(n log n)', 'O(n)', 'O(1)'], answer: 2, explain: 'Kadane\'s is a single pass — O(n). It keeps track of current max and global max as it goes.' },
     { q: 'In Two Sum, why do we use a HashMap instead of nested loops?', options: ['Less memory', 'O(n) vs O(n²) time', 'Easier to code', 'Works for sorted arrays'], answer: 1, explain: 'HashMap gives O(1) lookup so we do one pass: for each num, check if (target-num) exists.' },

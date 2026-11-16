@@ -30,7 +30,8 @@ Your personal dashboard for fitness, DSA, academics, and career — built with N
 ## Step 2 — Install dependencies
 
 ```bash
-cd engineer-os
+git clone https://github.com/bhuwan1321/engineer-dashboard.git
+cd engineer-dashboard
 npm install
 ```
 
