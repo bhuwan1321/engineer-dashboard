@@ -10,6 +10,9 @@ Next.js and Firebase. Google sign-in, with each user's data kept private to them
   <a href="#development"><b>Development</b></a>
 </p>
 
+<p align="center"><sub>Built with</sub><br>
+<img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,firebase" alt="Next.js, React, TypeScript, Tailwind CSS, Firebase" height="40"></p>
+
 Engineer Dashboard tracks the things a student engineer juggles in one place: daily health logs, workouts,
 data-structures practice, exams and engineering tasks. It is a **Next.js 14** app that stores data in **Firestore**
 and signs users in with Google, so every user sees only their own records.
